@@ -20,7 +20,7 @@
         </scm>
       </retriever>
       <defaultVersion>master</defaultVersion>
-      <implicit>false</implicit>
+      <implicit>true</implicit>
       <allowVersionOverride>true</allowVersionOverride>
     </org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
   </libraries>
