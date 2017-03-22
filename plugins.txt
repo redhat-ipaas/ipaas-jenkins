@@ -1,1 +1,3 @@
 workflow-durable-task-step:2.8
+github-branch-source:2.0.4
+github-pr-comment-build:1.1
