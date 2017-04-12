@@ -1,0 +1,21 @@
+import jenkins.model.*
+import com.cloudbees.plugins.credentials.*
+import com.cloudbees.plugins.credentials.common.*
+import com.cloudbees.plugins.credentials.domains.*
+import com.cloudbees.plugins.credentials.impl.*
+import com.cloudbees.jenkins.plugins.sshcredentials.impl.*
+import hudson.plugins.sshslaves.*;
+
+domain = Domain.global()
+store = Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getStore()
+
+def env = System.getenv()
+
+//Add credentilas for github account
+githubAccount = new UsernamePasswordCredentialsImpl(
+        CredentialsScope.GLOBAL,
+        "github", "Github Account Credentials",
+        env["GITHUB_USERNAME"],
+        env["GITHUB_PASSWORD"]
+)
+store.addCredentials(domain, githubAccount)
