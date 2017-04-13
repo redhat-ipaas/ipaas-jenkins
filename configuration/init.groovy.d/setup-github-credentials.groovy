@@ -11,11 +11,19 @@ store = Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.Sys
 
 def env = System.getenv()
 
-//Add credentilas for github account
+//Add credentials for github account
 githubAccount = new UsernamePasswordCredentialsImpl(
         CredentialsScope.GLOBAL,
         "github", "Github Account Credentials",
         env["GITHUB_USERNAME"],
         env["GITHUB_PASSWORD"]
 )
+
+githubAccessToken = new StringCredentialsImpl(
+        CredentialsScope.GLOBAL,
+        "githubaccesstoken",
+        "Github Access Token",
+        Secret.fromString(env["GITHUB_ACCESS_TOKEN"]))
+
 store.addCredentials(domain, githubAccount)
+store.addCredentials(domain, githubAccessToken)
