@@ -22,7 +22,7 @@ githubAccount = new UsernamePasswordCredentialsImpl(
         CredentialsScope.GLOBAL,
         "github", "Github Account Credentials",
         env["GITHUB_USERNAME"],
-        env["GITHUB_PASSWORD"]
+        env["GITHUB_ACCESS_TOKEN"] //this is intentional. We pass the access token as a password.
 )
 
 githubAccessToken = new StringCredentialsImpl(
