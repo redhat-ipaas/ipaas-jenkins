@@ -2,13 +2,13 @@
 <org.jenkinsci.plugins.workflow.libs.GlobalLibraries plugin="workflow-cps-global-lib@2.5">
   <libraries>
     <org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
-      <name>github.com/redhat-ipaas/ipaas-pipeline-library</name>
+      <name>github.com/syndesisio/syndesis-pipeline-library</name>
       <retriever class="org.jenkinsci.plugins.workflow.libs.SCMSourceRetriever">
         <scm class="org.jenkinsci.plugins.github_branch_source.GitHubSCMSource" plugin="github-branch-source@1.10">
           <id>1c531415-93da-459e-82a3-73fa6e0857c4</id>
           <checkoutCredentialsId>SAME</checkoutCredentialsId>
-          <repoOwner>redhat-ipaas</repoOwner>
-          <repository>ipaas-pipeline-library</repository>
+          <repoOwner>syndesisio</repoOwner>
+          <repository>syndesis-pipeline-library</repository>
           <includes>*</includes>
           <excludes></excludes>
           <buildOriginBranch>true</buildOriginBranch>

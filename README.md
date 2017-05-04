@@ -1,1 +1,1 @@
-IPaaS Jenkins Image
+Syndesis Jenkins Image

@@ -40,8 +40,8 @@
                     <id>ab87d7d2-c0f5-4b61-8000-8877324f9f62</id>
                     <checkoutCredentialsId>SAME</checkoutCredentialsId>
                     <scanCredentialsId>github</scanCredentialsId>
-                    <repoOwner>redhat-ipaas</repoOwner>
-                    <repository>ipaas-datamapper</repository>
+                    <repoOwner>syndesisio</repoOwner>
+                    <repository>syndesis-datamapper</repository>
                     <includes>*</includes>
                     <excludes></excludes>
                     <buildOriginBranch>true</buildOriginBranch>
