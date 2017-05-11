@@ -7,7 +7,7 @@
         <org.jenkinsci.plugins.workflow.libs.FolderLibraries plugin="workflow-cps-global-lib@2.8">
             <libraries>
                 <org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
-                    <name>github.com/syndesisio/syndesis-pipeline-library</name>
+                    <name>syndesis-pipeline-library</name>
                     <retriever class="org.jenkinsci.plugins.workflow.libs.SCMSourceRetriever">
                         <scm class="org.jenkinsci.plugins.github_branch_source.GitHubSCMSource" plugin="github-branch-source@2.0.4">
                             <id>dd90134d-b5ee-4bb7-abef-3a24b626a914</id>
