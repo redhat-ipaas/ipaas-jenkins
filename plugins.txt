@@ -2,6 +2,9 @@ ansicolor:0.5.0
 github-branch-source:2.0.4
 github-pr-comment-build:1.1
 git-server:1.7
+openshift-sync:0.1.23
+pipeline-model-definition:1.1.8
 scm-api:2.1.1
 script-security:1.27
 workflow-cps:2.33
+workflow-durable-task-step:2.12
