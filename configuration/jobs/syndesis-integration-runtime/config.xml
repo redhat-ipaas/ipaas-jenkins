@@ -14,7 +14,7 @@
                             <checkoutCredentialsId>SAME</checkoutCredentialsId>
                             <scanCredentialsId>github</scanCredentialsId>
                             <repoOwner>syndesisio</repoOwner>
-                            <repository>syndesis-integration-runtime</repository>
+                            <repository>syndesis-pipeline-library</repository>
                             <includes>*</includes>
                             <excludes></excludes>
                             <buildOriginBranch>true</buildOriginBranch>
