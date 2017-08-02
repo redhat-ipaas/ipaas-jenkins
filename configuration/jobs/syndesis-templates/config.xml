@@ -70,7 +70,7 @@
           <checkoutCredentialsId>SAME</checkoutCredentialsId>
           <scanCredentialsId>github</scanCredentialsId>
           <repoOwner>syndesisio</repoOwner>
-          <repository>syndesis-system-tests</repository>
+          <repository>syndesis-openshift-templates</repository>
           <includes>*</includes>
           <excludes></excludes>
           <buildOriginBranch>true</buildOriginBranch>
