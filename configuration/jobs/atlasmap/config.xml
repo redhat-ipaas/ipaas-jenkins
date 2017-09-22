@@ -67,8 +67,8 @@
                     <id>ab87d7d2-c0f5-4b61-8000-8877324f9f62</id>
                     <checkoutCredentialsId>SAME</checkoutCredentialsId>
                     <scanCredentialsId>github</scanCredentialsId>
-                    <repoOwner>syndesisio</repoOwner>
-                    <repository>syndesis-datamapper</repository>
+                    <repoOwner>atlasmap</repoOwner>
+                    <repository>atlasmap</repository>
                     <includes>*</includes>
                     <excludes></excludes>
                     <buildOriginBranch>true</buildOriginBranch>
