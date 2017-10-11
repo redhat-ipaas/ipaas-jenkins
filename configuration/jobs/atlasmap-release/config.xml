@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.11">
+  <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -12,28 +13,43 @@
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>developmentVersion</name>
+          <description>The version to set after the release.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>releaseVersion</name>
+          <description>The version to release.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.33">
-    <script>@Library(&apos;github.com/iocanel/syndesis-pipeline-library@misc&apos;)
+    <script>@Library(&apos;github.com/iocanel/syndesis-pipeline-library@release-improvements&apos;)
 def parameters = [:]
 
 
 slave {
     withArbitraryUser () {
-        withMaven (mavenSettingsXmlSecret: &apos;m2-settings&apos;, mavenLocalRepositoryPath: &apos;/home/jenkins/mvnrepo/&apos;) {
+        withMaven (mavenSettingsXmlSecret: &apos;m2-settings&apos;, mavenLocalRepositoryPath: &apos;/home/jenkins/mvnrepo/&apos;, serviceAccount: &apos;jenkins&apos;) {
             withSshKeys {
                 withGpgKeys (image: &apos;centos:centos7&apos;) {
                     inside {
-                        git &apos;git@github.com:atlasmap:atlasmap.git&apos;
+                        git &apos;git@github.com:atlasmap/atlasmap.git&apos;
                         container(&apos;maven&apos;) {
                             sh &apos;git config --global user.email &quot;rhipaasuser@gmail.com&quot;&apos;
                             sh &apos;git config --global user.name &quot;Syndesis CI&quot;&apos;
-                            sh &quot;mvn -B clean install -Pfabirc8&quot;
-                            sonatypeRelease()
-                            imagePush(name: &apos;syndesis-rest-config&apos;, repo: &apos;syndesis-rest&apos;, imageStreamTag: &apos;syndesis-rest:latest&apos;)
+                            def releasedVersion = sonatypeRelease(releaseVersion: &quot;${releaseVersion}&quot;, developmentVersion: &quot;${developmentVersion}&quot;, mavenOpts: &quot; -Pci,release&quot;)
+                            imagePush(name: &apos;syndesis-atlasmap-config&apos;, repo: &apos;syndesis-atlasmap&apos;, imageStreamTag: &quot;syndesis-atlasmap:latest&quot;)
+                            imagePush(name: &apos;syndesis-atlasmap-config&apos;, repo: &apos;syndesis-atlasmap&apos;, imageStreamTag: &quot;syndesis-atlasmap:1.0&quot;)
+                            imagePush(name: &apos;syndesis-atlasmap-config&apos;, repo: &apos;syndesis-atlasmap&apos;, imageStreamTag: &quot;syndesis-atlasmap:${releasedVersion}&quot;)
                         }
                     }
                 }

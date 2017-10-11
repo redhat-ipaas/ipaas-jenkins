@@ -22,7 +22,7 @@
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>developmentVersion</name>
-          <description>The development version.</description>
+          <description>The version to set after the release.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -42,11 +42,11 @@ slave {
             withSshKeys {
                 withGpgKeys (image: &apos;centos:centos7&apos;) {
                     inside {
-                        git &apos;git@github.com:syndesisio/connectors.git&apos;
+                        git &apos;git@github.com:atlasmap/camel-atlasmap.git&apos;
                         container(&apos;maven&apos;) {
                             sh &apos;git config --global user.email &quot;rhipaasuser@gmail.com&quot;&apos;
                             sh &apos;git config --global user.name &quot;Syndesis CI&quot;&apos;
-                            def releasedVersion = sonatypeRelease(releaseVersion: &quot;${releaseVersion}&quot;, developmentVersion: &quot;${developmentVersion}&quot;, profile: &apos;release&apos;)
+                            def releasedVersion = sonatypeRelease(releaseVersion: &quot;${releaseVersion}&quot;, developmentVersion: &quot;${developmentVersion}&quot;)
                         }
                     }
                 }

@@ -13,6 +13,20 @@
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>releaseVersion</name>
+          <description>The version to release.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>developmentVersion</name>
+          <description>The version to set after the release.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
@@ -32,8 +46,10 @@ slave {
                         container(&apos;maven&apos;) {
                             sh &apos;git config --global user.email &quot;rhipaasuser@gmail.com&quot;&apos;
                             sh &apos;git config --global user.name &quot;Syndesis CI&quot;&apos;
-                            sonatypeRelease()
+                            def releasedVersion = sonatypeRelease(releaseVersion: &quot;${releaseVersion}&quot;, developmentVersion: &quot;${developmentVersion}&quot;, mavenOpts: &quot; -Pci,release&quot;)
                             imagePush(name: &apos;syndesis-rest-config&apos;, repo: &apos;syndesis-rest&apos;, imageStreamTag: &apos;syndesis-rest:latest&apos;)
+                            imagePush(name: &apos;syndesis-rest-config&apos;, repo: &apos;syndesis-rest&apos;, imageStreamTag: &apos;syndesis-rest:1.0&apos;)
+                            imagePush(name: &apos;syndesis-rest-config&apos;, repo: &apos;syndesis-rest&apos;, imageStreamTag: &apos;syndesis-rest:${releasedVersion}&apos;)
                         }
                     }
                 }

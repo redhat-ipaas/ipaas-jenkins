@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.11">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>tag</name>
+          <description>The tag to use</description>
+          <defaultValue>latest</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@0.1.23">
+      <uid></uid>
+      <namespace></namespace>
+      <name></name>
+      <resourceVersion></resourceVersion>
+    </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
+      <autoRebuild>false</autoRebuild>
+    </com.sonyericsson.rebuild.RebuildSettings>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.33">
+    <script>@Library(&apos;github.com/syndesisio/syndesis-pipeline-library@master&apos;)
+def vars = [:]
+pipeline {
+    agent any
+
+    parameters {
+        string(defaultValue: &apos;latest&apos;, description: &apos;The tag to use&apos;, name: &apos;tag&apos;)
+    }
+
+    stages {
+        stage(&quot;Push images&quot;) {
+            steps {
+                imagePush(name: &apos;syndesis-jenkins-config&apos;, repo: &apos;syndesis-jenkins&apos;, imageStreamTag: &quot;syndesis-jenkins:${params.tag}&quot;)
+            }
+        }
+    }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
