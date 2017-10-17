@@ -7,12 +7,22 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>tag</name>
-          <description>The tag to use</description>
-          <defaultValue>latest</defaultValue>
+          <name>releaseVersion</name>
+          <description>The version to release.</description>
+          <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>developmentVersion</name>
+          <description>The version to set after the release.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>dockerReleaseEnabled</name>
+          <description>Enable the release of Docker images.</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
+    </hudson.model.ParametersDefinitionProperty>   
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@0.1.23">
       <uid></uid>
       <namespace></namespace>
@@ -36,7 +46,9 @@ pipeline {
     stages {
         stage(&quot;Push images&quot;) {
             steps {
-                imagePush(name: &apos;syndesis-jenkins-config&apos;, repo: &apos;syndesis-jenkins&apos;, imageStreamTag: &quot;syndesis-jenkins:${params.tag}&quot;)
+                [&quot;1.0&quot;, &quot;${releaseVersion}&quot;, &quot;latest&quot;].each {
+                    imagePush(enabled: dockerReleaseEnabled, name: &apos;syndesis-jenkins-push-dockerhub-bc&apos;, user:&apos;syndesis&apos;, repo: &apos;syndesis-jenkins&apos;, imageStreamTag: &quot;syndesis-jenkins:${it}&quot;)
+                }
             }
         }
     }
