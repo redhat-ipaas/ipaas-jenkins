@@ -22,18 +22,15 @@
           <defaultValue>true</defaultValue>
         </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>   
+    </hudson.model.ParametersDefinitionProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@0.1.23">
       <uid></uid>
       <namespace></namespace>
       <name></name>
       <resourceVersion></resourceVersion>
     </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
-      <autoRebuild>false</autoRebuild>
-    </com.sonyericsson.rebuild.RebuildSettings>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.33">
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.41">
     <script>@Library(&apos;github.com/syndesisio/syndesis-pipeline-library@master&apos;)
 def vars = [:]
 pipeline {

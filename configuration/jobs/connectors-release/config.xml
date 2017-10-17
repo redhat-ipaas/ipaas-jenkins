@@ -10,9 +10,6 @@
       <name></name>
       <resourceVersion></resourceVersion>
     </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
-      <autoRebuild>false</autoRebuild>
-    </com.sonyericsson.rebuild.RebuildSettings>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
@@ -36,7 +33,7 @@
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.33">
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.41">
     <script>@Library(&apos;github.com/syndesisio/syndesis-pipeline-library&apos;)
 def parameters = [:]
 
