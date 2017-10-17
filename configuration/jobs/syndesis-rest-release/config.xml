@@ -10,6 +10,30 @@
       <name></name>
       <resourceVersion></resourceVersion>
     </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>releaseVersion</name>
+          <description>The version to release.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>developmentVersion</name>
+          <description>The version to set after the release.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>mavenReleaseEnabled</name>
+          <description>Enables the release of maven artifacts</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>dockerReleaseEnabled</name>
+          <description>Enable the release of Docker images.</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>      
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
@@ -18,7 +42,7 @@
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.33">
-    <script>@Library(&apos;github.com/iocanel/syndesis-pipeline-library@misc&apos;)
+    <script>@Library(&apos;github.com/syndesisio/syndesis-pipeline-library&apos;)
 def parameters = [:]
 
 
@@ -32,8 +56,11 @@ slave {
                         container(&apos;maven&apos;) {
                             sh &apos;git config --global user.email &quot;rhipaasuser@gmail.com&quot;&apos;
                             sh &apos;git config --global user.name &quot;Syndesis CI&quot;&apos;
-                            sonatypeRelease()
-                            imagePush(name: &apos;syndesis-rest-config&apos;, repo: &apos;syndesis-rest&apos;, imageStreamTag: &apos;syndesis-rest:latest&apos;)
+                            sonatypeRelease(enabled: mavenReleaseEnabled, releaseVersion: &quot;${releaseVersion}&quot;, developmentVersion: &quot;${developmentVersion}&quot;, profiles: &quot;fabric8,ci,release&quot;, stagingProgressTimeoutMinutes: &apos;10&apos;)
+                           
+                           [&quot;1.0&quot;, &quot;${releaseVersion}&quot;, &quot;latest&quot;].each {
+                              imagePush(enabled: dockerReleaseEnabled, name: &apos;syndesis-rest-push-dockerhub-bc&apos;, user:&apos;syndesis&apos;, repo: &apos;syndesis-rest&apos;, imageStreamTag: &quot;syndesis-rest:${it}&quot;)
+                           }
                         }
                     }
                 }

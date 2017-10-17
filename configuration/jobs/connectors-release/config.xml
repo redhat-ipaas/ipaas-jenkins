@@ -13,12 +13,31 @@
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>releaseVersion</name>
+          <description>The version to release.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>developmentVersion</name>
+          <description>The version to set after the release.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>mavenReleaseEnabled</name>
+          <description>Enables the release of maven artifacts</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.33">
-    <script>@Library(&apos;github.com/iocanel/syndesis-pipeline-library@misc&apos;)
+    <script>@Library(&apos;github.com/syndesisio/syndesis-pipeline-library&apos;)
 def parameters = [:]
 
 
@@ -28,11 +47,12 @@ slave {
             withSshKeys {
                 withGpgKeys (image: &apos;centos:centos7&apos;) {
                     inside {
-                        git &apos;git@github.com:syndesisio/connecotrs.git&apos;
+                        git &apos;git@github.com:syndesisio/connectors.git&apos;
                         container(&apos;maven&apos;) {
                             sh &apos;git config --global user.email &quot;rhipaasuser@gmail.com&quot;&apos;
                             sh &apos;git config --global user.name &quot;Syndesis CI&quot;&apos;
-                            sonatypeRelease()
+                            sonatypeRelease(enabled: mavenReleaseEnabled, releaseVersion: &quot;${releaseVersion}&quot;, developmentVersion: &quot;${developmentVersion}&quot;, profiles: &quot;fabric8,ci,release&quot;, stagingProgressTimeoutMinutes: &apos;10&apos;)
+                        }
                     }
                 }
             }

@@ -42,26 +42,21 @@
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.33">
-    <script>@Library(&apos;github.com/syndesisio/syndesis-pipeline-library&apos;)
+    <script>@Library(&apos;github.com/iocanel/syndesis-pipeline-library@release-improvements&apos;)
 def parameters = [:]
 
 
 slave {
     withArbitraryUser () {
-        withMaven (mavenSettingsXmlSecret: &apos;m2-settings&apos;, mavenLocalRepositoryPath: &apos;/home/jenkins/mvnrepo/&apos;, serviceAccount: &apos;jenkins&apos;) {
+        withMaven (mavenSettingsXmlSecret: &apos;m2-settings&apos;, mavenLocalRepositoryPath: &apos;/home/jenkins/mvnrepo/&apos;) {
             withSshKeys {
                 withGpgKeys (image: &apos;centos:centos7&apos;) {
                     inside {
-                        git &apos;git@github.com:atlasmap/atlasmap-runtime.git&apos;
+                        git &apos;git@github.com:atlasmap/camel-atlasmap.git&apos;
                         container(&apos;maven&apos;) {
                             sh &apos;git config --global user.email &quot;rhipaasuser@gmail.com&quot;&apos;
                             sh &apos;git config --global user.name &quot;Syndesis CI&quot;&apos;
-                            
                             sonatypeRelease(enabled: mavenReleaseEnabled, releaseVersion: &quot;${releaseVersion}&quot;, developmentVersion: &quot;${developmentVersion}&quot;, profiles: &quot;fabric8,ci,release&quot;, stagingProgressTimeoutMinutes: &apos;10&apos;)
-                           
-                           [&quot;1.0&quot;, &quot;${releaseVersion}&quot;, &quot;latest&quot;].each {
-                              imagePush(enabled: dockerReleaseEnabled, name: &apos;atlasmap-push-dockerhub-bc&apos;, user:&apos;atlasmap&apos;, repo: &apos;atlasmap&apos;, imageStreamTag: &quot;atlasmap:${it}&quot;)
-                           }
                         }
                     }
                 }
