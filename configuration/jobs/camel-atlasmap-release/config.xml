@@ -1,6 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.11">
-  <actions/>
+  <actions>
+    <io.jenkins.blueocean.service.embedded.BlueOceanUrlAction plugin="blueocean-rest-impl@1.1.6">
+      <blueOceanUrlObject class="io.jenkins.blueocean.service.embedded.BlueOceanUrlObjectImpl">
+        <mappedUrl>blue/organizations/jenkins/camel-atlasmap-release</mappedUrl>
+      </blueOceanUrlObject>
+    </io.jenkins.blueocean.service.embedded.BlueOceanUrlAction>
+  </actions>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -10,9 +16,6 @@
       <name></name>
       <resourceVersion></resourceVersion>
     </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
-      <autoRebuild>false</autoRebuild>
-    </com.sonyericsson.rebuild.RebuildSettings>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
@@ -41,8 +44,8 @@
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.33">
-    <script>@Library(&apos;github.com/iocanel/syndesis-pipeline-library@release-improvements&apos;)
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.41">
+    <script>@Library(&apos;github.com/syndesisio/syndesis-pipeline-library&apos;)
 def parameters = [:]
 
 
