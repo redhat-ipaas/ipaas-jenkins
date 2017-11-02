@@ -1,6 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.11">
-  <actions/>
+  <actions>
+    <io.jenkins.blueocean.service.embedded.BlueOceanUrlAction plugin="blueocean-rest-impl@1.1.6">
+      <blueOceanUrlObject class="io.jenkins.blueocean.service.embedded.BlueOceanUrlObjectImpl">
+        <mappedUrl>blue/organizations/jenkins/m2-repo-builder</mappedUrl>
+      </blueOceanUrlObject>
+    </io.jenkins.blueocean.service.embedded.BlueOceanUrlAction>
+  </actions>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -20,7 +26,8 @@ def id = buildId()
 
 slave {
     withOpenshift {
-        withMaven(mavenImage: &apos;172.30.39.149:5000/syndesis-ci/maven-with-repo:latest&apos;, mavenSettingsXmlSecret: &apos;m2-settings&apos;, serviceAccount: &apos;jenkins&apos;) {
+        //withMaven(mavenImage: &apos;172.30.39.149:5000/syndesis-ci/maven-with-repo:latest&apos;, mavenSettingsXmlSecret: &apos;m2-settings&apos;, serviceAccount: &apos;jenkins&apos;) {
+        withMaven(mavenImage: &apos;maven:3.5.0&apos;, mavenSettingsXmlSecret: &apos;m2-settings&apos;, serviceAccount: &apos;jenkins&apos;) {
             inside {
                 git &apos;https://github.com/syndesisio/syndesis&apos;
                 shareBinary(&apos;openshift&apos;, &apos;oc&apos;)
@@ -33,22 +40,14 @@ slave {
                      mvn clean install -DskipTests -B -Dmaven.repo.local=/home/jenkins/.m2/repository -Duser.home=/home/jenkins
                      cd ..
                      
-                     cd integration-runtime
-                     mvn clean install -DskipTests -B -Dmaven.repo.local=/home/jenkins/.m2/repository -Duser.home=/home/jenkins
-                     cd ..
+                     if [ -d /usr/local/share/maven/repository ]; then
+                        cp -rf /usr/local/share/maven/repository/* /home/jenkins/.m2/repository/
+                     fi
                      
-                     cd syndesis-verifier
-                     mvn clean install -DskipTests -B -Dmaven.repo.local=/home/jenkins/.m2/repository -Duser.home=/home/jenkins
-                     cd ..
-                     
-                     cd rest
-                     mvn clean install -DskipTests -B -Dmaven.repo.local=/home/jenkins/.m2/repository -Duser.home=/home/jenkins
-                     cd ..
-                     
-                     cp -rf /usr/local/share/maven/repository/* /home/jenkins/.m2/repository/
                      cd /home/jenkins/.m2/repository/
-                     tar -cvf /home/jenkins/repository.tar .
-                     oc start-build -F --from-archive=/home/jenkins/repository.tar maven-with-repo
+                     tar -cvzf /home/jenkins/repository.tar.gz .
+                     ls -alH /home/jenkins/repository.tar.gz
+                     oc start-build -F --from-archive=/home/jenkins/repository.tar.gz maven-with-repo --request-timeout=10m --loglevel=8
                      &quot;&quot;&quot;
                     }
                 }
