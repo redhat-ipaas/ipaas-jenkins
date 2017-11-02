@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.11">
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@0.1.23">
+      <uid></uid>
+      <namespace></namespace>
+      <name></name>
+      <resourceVersion></resourceVersion>
+    </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>releaseVersion</name>
+          <description>Release Version</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.41">
+    <script>/**
+   This pipeline builds the whole Syndesis CI:
+ - Jenkins Plugins
+ - Jenkins Agent Images
+ - Jenkins Images (Openshift and Syndesis)
+ **/
+node {
+  stage (&apos;Load pipeline library&apos;) {
+    git https://github.com/syndesisio/syndesis-ci.git
+    sh &apos;git submodule update --init pipeline-library&apos;
+    library identifier: &quot;syndesis-pipeline-library@${env.BRANCH_NAME}&quot;, retriever: workspaceRetriever(&quot;${WORKSPACE}/pipeline-library&quot;)
+  }
+
+  inNamespace(cloud: &apos;openshift&apos;, prefix: &apos;ci-self-test&apos;) {
+    echo &quot;Using ${KUBERNETES_NAMESPACE}&quot;
+    slave {
+      inside(serviceAccount: &apos;jenkins&apos;) {
+        stage (&apos;Checkout source&apos;) {
+          //Checkout the source again inside the agent...
+          git https://github.com/syndesisio/syndesis-ci.git
+          sh &apos;git submodule update --init --recursive&apos;
+        }
+
+        stage(&apos;Build&apos;) {
+          //We disable test, because some plugins assume minikube and break ...
+          sh &quot;./bin/build.sh --skip-tests --namespace $KUBERNETES_NAMESPACE&quot; --release --version &quot;${releaseVersion}&quot;
+        }
+      }
+    }
+  }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
