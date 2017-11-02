@@ -3,7 +3,7 @@
   <actions>
     <io.jenkins.blueocean.service.embedded.BlueOceanUrlAction plugin="blueocean-rest-impl@1.1.6">
       <blueOceanUrlObject class="io.jenkins.blueocean.service.embedded.BlueOceanUrlObjectImpl">
-        <mappedUrl>blue/organizations/jenkins/syndesis-integration-runtime/branches</mappedUrl>
+        <mappedUrl>blue/organizations/jenkins/syndesis-ci/branches</mappedUrl>
       </blueOceanUrlObject>
     </io.jenkins.blueocean.service.embedded.BlueOceanUrlAction>
   </actions>
@@ -65,15 +65,16 @@
           <id>ab87d7d2-c0f5-4b61-8000-8877324f9f62</id>
           <credentialsId>github</credentialsId>
           <repoOwner>syndesisio</repoOwner>
-          <repository>syndesis-integration-runtime</repository>
+          <repository>syndesis-ci</repository>
           <traits>
             <org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait>
-              <strategyId>1</strategyId>
+              <strategyId>3</strategyId>
             </org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait>
             <org.jenkinsci.plugins.github__branch__source.ForkPullRequestDiscoveryTrait>
               <strategyId>1</strategyId>
               <trust class="org.jenkinsci.plugins.github_branch_source.ForkPullRequestDiscoveryTrait$TrustContributors"/>
             </org.jenkinsci.plugins.github__branch__source.ForkPullRequestDiscoveryTrait>
+            <org.jenkinsci.plugins.github__branch__source.SSHCheckoutTrait/>
           </traits>
         </source>
         <strategy class="jenkins.branch.DefaultBranchPropertyStrategy">
