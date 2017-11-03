@@ -1,5 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.11">
+  <actions>
+    <io.jenkins.blueocean.service.embedded.BlueOceanUrlAction plugin="blueocean-rest-impl@1.1.6">
+      <blueOceanUrlObject class="io.jenkins.blueocean.service.embedded.BlueOceanUrlObjectImpl">
+        <mappedUrl>blue/organizations/jenkins/syndesis-ci-release</mappedUrl>
+      </blueOceanUrlObject>
+    </io.jenkins.blueocean.service.embedded.BlueOceanUrlAction>
+  </actions>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -23,36 +30,37 @@
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.41">
-    <script>/**
-   This pipeline builds the whole Syndesis CI:
- - Jenkins Plugins
- - Jenkins Agent Images
- - Jenkins Images (Openshift and Syndesis)
- **/
+    <script>def currentNamespace=&apos;syndesis-ci&apos;
 node {
   stage (&apos;Load pipeline library&apos;) {
     git &apos;https://github.com/syndesisio/syndesis-ci.git&apos;
     sh &apos;git submodule update --init pipeline-library&apos;
     library identifier: &quot;syndesis-pipeline-library@${env.BRANCH_NAME}&quot;, retriever: workspaceRetriever(&quot;${WORKSPACE}/pipeline-library&quot;)
+    currentNamespace=podNamespace()
   }
+}
 
-  inNamespace(cloud: &apos;openshift&apos;, prefix: &apos;ci-self-test&apos;) {
+  inNamespace(cloud: &apos;openshift&apos;, prefix: &apos;ci-release&apos;) {
     echo &quot;Using ${KUBERNETES_NAMESPACE}&quot;
     slave {
-      inside(serviceAccount: &apos;jenkins&apos;) {
-        stage (&apos;Checkout source&apos;) {
-          //Checkout the source again inside the agent...
-          git &apos;https://github.com/syndesisio/syndesis-ci.git&apos;
-          sh &apos;git submodule update --init --recursive&apos;
-        }
+        withSshKeys {
+            inside(serviceAccount: &apos;jenkins&apos;, namespace: &quot;$currentNamespace&quot;) {
+                stage (&apos;Checkout source&apos;) {
+                    //Checkout the source again inside the agent...
+                    git &apos;https://github.com/syndesisio/syndesis-ci.git&apos;
+                    sh &apos;git config --global user.email &quot;rhipaasuser@gmail.com&quot;&apos;
+                    sh &apos;git config --global user.name &quot;Syndesis CI&quot;&apos;
+                    sh &apos;git submodule update --init --recursive&apos;
+                }
+        
 
-        stage(&apos;Build&apos;) {
-          //We disable test, because some plugins assume minikube and break ...
-          sh &quot;./bin/build.sh --skip-tests --namespace $KUBERNETES_NAMESPACE --release --version $releaseVersion&quot;
+                stage(&apos;Build&apos;) {
+                    //We disable test, because some plugins assume minikube and break ...
+                    sh &quot;./bin/build.sh --skip-tests --namespace $KUBERNETES_NAMESPACE --release --version ${releaseVersion}&quot;
+                }
+            }
         }
-      }
     }
-  }
 }</script>
     <sandbox>true</sandbox>
   </definition>
